@@ -32,3 +32,12 @@ Le rendu du projet est prévu avant le début du second TP. Il est nécessaire d
 
 Installez [NodeJS LTS](https://nodejs.org) (via `nvm` ou `asdf`), [Ganache](https://trufflesuite.com/docs/ganache/), [Truffle](https://trufflesuite.com/docs/truffle/) ainsi que MetaMask. N'oubliez pas de rédiger votre rapport en même temps.
 
+Les tâches sont à réaliser dans cet ordre :
+- Installation de NodeJS LTS ;
+- Installation de Ganache ;
+- Création d'un workspace sur Ganache ;
+- Installation de l'extension Metamask ;
+- Ajout d'un réseau à Metamask pour le lier à Ganache ;
+- Importation d'un compte Ganache au portefeuille Metamask ;
+- Installation de Truffle.
+
