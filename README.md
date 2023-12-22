@@ -39,5 +39,7 @@ Les tâches sont à réaliser dans cet ordre :
 - Installation de l'extension Metamask ;
 - Ajout d'un réseau à Metamask pour le lier à Ganache ;
 - Importation d'un compte Ganache au portefeuille Metamask ;
-- Installation de Truffle.
+- Installation de Truffle ;
+- Création de la base du projet à l'aide de la template `Metacoin` ;
+- Modification du fichier de configuration de Truffle pour prendre en charge Ganache.
 
