@@ -8,7 +8,7 @@ Le TP est à réaliser individuellement.
 
 ## Présentation
 
-Le projet consiste à créer un Smart Contract (SC) permettant de réaliser une enchère ascendante Hollandaise.
+Le projet consiste à créer un Smart Contract permettant de réaliser une enchère ascendante Hollandaise [1].
 
 Une enchère ascendante hollandaise est un document électronique (RFx) [2] qui contient une liste d'articles que des acheteurs veulent vendre. Lors de cette enchère, le prix des articles diminue après des intervalles fixés jusqu'à ce que le prix réservé soit atteint. Avant que le prix réservé soit atteint, si le fournisseur fait une offre pour l'article, celui-ci est attribué à ce fournisseur et l'enchère est clôturée pour l'article.
 
@@ -24,22 +24,5 @@ L'enchère est clôturée lorsque la soumission d'offres pour tous les articles 
 
 ## Restitution
 
-**Un rapport concernant l'installation des outils de développement Ethereum doit être rédigé avant la fin du premier TP.**
-
-Le rendu du projet est prévu avant le début du second TP. Il est nécessaire de tester le SC, il est donc demandé de rédiger des tests unitaires ainsi que de la documentation à propos du SC.
-
-## Installation
-
-Installez [NodeJS LTS](https://nodejs.org) (via `nvm` ou `asdf`), [Ganache](https://trufflesuite.com/docs/ganache/), [Truffle](https://trufflesuite.com/docs/truffle/) ainsi que MetaMask. N'oubliez pas de rédiger votre rapport en même temps.
-
-Les tâches sont à réaliser dans cet ordre :
-- Installation de NodeJS LTS ;
-- Installation de Ganache ;
-- Création d'un workspace sur Ganache ;
-- Installation de l'extension Metamask ;
-- Ajout d'un réseau à Metamask pour le lier à Ganache ;
-- Importation d'un compte Ganache au portefeuille Metamask ;
-- Installation de Truffle ;
-- Création de la base du projet à l'aide de la template `Metacoin` ;
-- Modification du fichier de configuration de Truffle pour prendre en charge Ganache.
+Le rendu du projet est prévu avant le début du second TP. Il est nécessaire de tester le Smart Contract, il est donc demandé de rédiger des tests unitaires ainsi que de la documentation à propos du Smart Contract.
 
