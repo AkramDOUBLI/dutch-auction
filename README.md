@@ -4,7 +4,7 @@
 |---------|--------|
 |   Doe   |  Jane  |
 
-Le TP est à réaliser individuellement.
+Le TP est à réaliser par groupe de 2.
 
 ## Présentation
 
