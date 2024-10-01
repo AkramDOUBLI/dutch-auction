@@ -18,9 +18,9 @@ L'enchère s'ouvre avec le premier article avec le prix de départ spécifié et
 
 L'enchère est clôturée lorsque la soumission d'offres pour tous les articles est terminée.
 
-[1] IBM. Enchère ascendante Hollandaise. [en ligne] Disponible sur https://www.ibm.com/docs/fr/emptoris-sourcing/10.1.0?topic=rt-dutch-forward-auction.
+[1] IBM. « Enchère ascendante Hollandaise. » [en ligne] Disponible sur https://www.ibm.com/docs/fr/emptoris-sourcing/10.1.0?topic=rt-dutch-forward-auction.
 
-[2] IBM. Types de RFx. [en ligne] Disponible sur https://www.ibm.com/docs/fr/emptoris-sourcing/10.1.0?topic=rfx-types.
+[2] IBM. « Types de RFx. » [en ligne] Disponible sur https://www.ibm.com/docs/fr/emptoris-sourcing/10.1.0?topic=rfx-types.
 
 ## Restitution
 
