@@ -3,6 +3,7 @@
 |   Nom   | Prénom |
 |---------|--------|
 |   Doe   |  Jane  |
+|   Doe   |  John  |
 
 Le TP est à réaliser par groupe de 2.
 
