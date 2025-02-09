@@ -25,3 +25,16 @@ L'enchère est clôturée lorsque la soumission d'offres pour tous les articles 
 
 Il est nécessaire de tester le Smart Contract, il est donc demandé de rédiger des tests unitaires ainsi que de la documentation à propos du Smart Contract mais aussi de l'application décentralisée.
 
+# Sample Hardhat Project
+
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+
+Try running some of the following tasks:
+
+```shell
+npx hardhat help
+npx hardhat test
+REPORT_GAS=true npx hardhat test
+npx hardhat node
+npx hardhat ignition deploy ./ignition/modules/Lock.js
+```

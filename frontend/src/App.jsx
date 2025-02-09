@@ -15,7 +15,19 @@ function App() {
         if (!contract) return;
 
         try {
-            const articleData = await contract.articles(0); // Récupère le premier article
+            const currentIndex = await contract.currentArticleIndex(); // Récupérer l'index actuel
+            const auctionEnded = await contract.auctionEnded();
+
+            console.log("Chargement de l'article index :", currentIndex.toString());
+            console.log("Enchère terminée :", auctionEnded);
+
+            if (auctionEnded) {
+                setArticle(null); // Aucun article disponible
+                return;
+            }
+
+            const articleData = await contract.articles(currentIndex);
+
             setArticle({
                 name: articleData[0],
                 startingPrice: articleData[1].toString(),
@@ -57,13 +69,15 @@ function App() {
                     <h2>{article.name}</h2>
                     <p>Prix de départ : {article.startingPrice} eth</p>
                     <p>Prix réservé : {article.reservePrice} eth</p>
+                    <p>Prix de décrement : {article.priceDecrement} eth</p>
                     <p>Prix actuel : {article.currentPrice.toString()} eth</p>
+                    <p>Intervalle de modification du prix : {article.timeInterval} s</p>
                     <button onClick={buyArticle} disabled={loading}>
                         {loading ? "Achat en cours..." : "Acheter maintenant"}
                     </button>
                 </div>
             ) : (
-                <p>Chargement de l'article...</p>
+                <p>Aucun produit disponible.</p>
             )}
         </div>
     );

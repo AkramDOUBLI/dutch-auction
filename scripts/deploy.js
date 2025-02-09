@@ -12,7 +12,7 @@ async function main() {
 
     // Ajouter des articles après le déploiement
     await auction.addArticle("Article 1", 1000, 500, 50, 30);
-    await auction.addArticle("Article 2", 2000, 1000, 100, 30);
+    await auction.addArticle("Article 2", 2000, 1000, 100, 40);
     console.log("Articles ajoutés !");
 }
 
