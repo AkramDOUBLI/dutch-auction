@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
+import "hardhat/console.sol";
 
 contract DutchAuction {
     struct Article {
@@ -20,6 +21,7 @@ contract DutchAuction {
 
     event ArticleSold(uint indexed articleIndex, address buyer, uint finalPrice);
     event AuctionEnded();
+    event AuctionReopened();
 
     modifier onlySeller() {
         require(msg.sender == seller, unicode"Seul le vendeur peut exécuter cette action");
@@ -51,6 +53,14 @@ contract DutchAuction {
             sold: false,
             buyer: address(0)
         }));
+        // Si l’enchère était terminée et qu'on ajoute un article, on la réactive
+        if (auctionEnded) {
+            console.log(unicode" Avant modification: auctionEnded =", auctionEnded);
+            auctionEnded = false;
+            currentArticleIndex = articles.length - 1;
+            emit AuctionReopened();
+            console.log(unicode" Après modification: auctionEnded =", auctionEnded);
+        }
     }
 
     // Obtenir le prix actuel de l'article en cours

@@ -37,6 +37,12 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [],
+      "name": "AuctionReopened",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "string",
