@@ -14,36 +14,51 @@ contract DutchAuction {
         address buyer;
     }
 
-    address public seller;
-    Article[] public articles;
-    uint public currentArticleIndex = 0;
-    bool public auctionEnded = false;
+    struct Auction {
+        address seller;
+        Article[] articles;
+        uint currentArticleIndex;
+        bool auctionEnded;
+    }
 
-    event ArticleSold(uint indexed articleIndex, address buyer, uint finalPrice);
-    event AuctionEnded();
-    event AuctionReopened();
+    mapping(uint => Auction) public auctions;
+    uint public auctionCount;
 
-    modifier onlySeller() {
-        require(msg.sender == seller, unicode"Seul le vendeur peut exécuter cette action");
+    event AuctionCreated(uint auctionId, address seller);
+    event ArticleAdded(uint auctionId, string name);
+    event ArticleSold(uint auctionId, uint articleIndex, address buyer, uint finalPrice);
+    event AuctionEnded(uint auctionId);
+
+    modifier onlySeller(uint auctionId) {
+        require(msg.sender == auctions[auctionId].seller, unicode"Seul le vendeur peut exécuter cette action");
         _;
     }
 
-    constructor() {
-        seller = msg.sender;
+    // Créer une nouvelle enchère
+    function createAuction() public {
+        auctionCount++;
+
+        // Créer une enchère vide et ajouter le vendeur
+        auctions[auctionCount].seller = msg.sender;
+        auctions[auctionCount].currentArticleIndex = 0;
+        auctions[auctionCount].auctionEnded = false;
+
+        emit AuctionCreated(auctionCount, msg.sender);
+        console.log(unicode"Nouvelle enchère créée avec l'ID :", auctionCount);
     }
 
-    // Ajouter un article à la liste
+    // Ajouter un article à une enchère spécifique
     function addArticle(
+        uint auctionId,
         string memory name,
         uint startingPrice,
         uint reservePrice,
         uint priceDecrement,
         uint timeInterval
-    ) public onlySeller {
-        require(startingPrice > reservePrice, unicode"Le prix de départ doit être supérieur au prix réservé");
-        require(priceDecrement > 0, unicode"La diminution du prix doit être positive");
+    ) public onlySeller(auctionId) {
+        require(!auctions[auctionId].auctionEnded, unicode"L'enchère est terminée");
 
-        articles.push(Article({
+        auctions[auctionId].articles.push(Article({
             name: name,
             startingPrice: startingPrice,
             reservePrice: reservePrice,
@@ -53,21 +68,17 @@ contract DutchAuction {
             sold: false,
             buyer: address(0)
         }));
-        // Si l’enchère était terminée et qu'on ajoute un article, on la réactive
-        if (auctionEnded) {
-            console.log(unicode" Avant modification: auctionEnded =", auctionEnded);
-            auctionEnded = false;
-            currentArticleIndex = articles.length - 1;
-            emit AuctionReopened();
-            console.log(unicode" Après modification: auctionEnded =", auctionEnded);
-        }
+
+        emit ArticleAdded(auctionId, name);
+        console.log(unicode"Article ajouté dans l'enchère", auctionId, unicode":", name);
     }
 
-    // Obtenir le prix actuel de l'article en cours
-    function getCurrentPrice() public view returns (uint) {
-        require(currentArticleIndex < articles.length, unicode"Aucun article disponible");
+   //  Obtenir le prix actuel d'un article spécifique
+    function getCurrentPrice(uint auctionId, uint articleIndex) public view returns (uint) {
+        Auction storage auction = auctions[auctionId];
+        require(articleIndex < auction.articles.length, unicode"Article invalide");
 
-        Article storage article = articles[currentArticleIndex];
+        Article storage article = auction.articles[articleIndex];
         uint timeElapsed = (block.timestamp - article.startTime) / article.timeInterval;
         uint priceReduction = timeElapsed * article.priceDecrement;
         uint currentPrice = article.startingPrice > priceReduction ? article.startingPrice - priceReduction : article.reservePrice;
@@ -75,28 +86,70 @@ contract DutchAuction {
         return currentPrice > article.reservePrice ? currentPrice : article.reservePrice;
     }
 
-    // Acheter l'article au prix actuel
-    function buy() public payable {
-        require(currentArticleIndex < articles.length, unicode"Aucun article disponible");
-        Article storage article = articles[currentArticleIndex];
+    // Acheter un article spécifique dans une enchère
+    function buy(uint auctionId, uint articleIndex) public payable {
+        Auction storage auction = auctions[auctionId];
+        require(articleIndex < auction.articles.length, unicode"Article invalide");
+
+        Article storage article = auction.articles[articleIndex];
 
         require(!article.sold, unicode"Cet article a déjà été vendu");
-        uint currentPrice = getCurrentPrice();
-        require(msg.value >= currentPrice, unicode"Fonds insuffisants");
-        require(block.timestamp >= articles[currentArticleIndex].startTime, unicode"L'enchère n'a pas encore commencé");
+        uint currentPrice = getCurrentPrice(auctionId, articleIndex);
+        require(msg.value >= currentPrice, unicode"💰 Fonds insuffisants");
+        require(block.timestamp >= article.startTime, unicode"⏳ L'enchère n'a pas encore commencé");
+
         article.sold = true;
         article.buyer = msg.sender;
-        payable(seller).transfer(msg.value);
+        payable(auction.seller).transfer(msg.value);
 
-        emit ArticleSold(currentArticleIndex, msg.sender, currentPrice);
+        emit ArticleSold(auctionId, articleIndex, msg.sender, currentPrice);
+        console.log(unicode"Article vendu dans l'enchère", auctionId, unicode"à l'acheteur :", msg.sender);
 
-        // Passer à l'article suivant si disponible
-        currentArticleIndex++;
+        // Vérifier si tous les articles sont vendus pour terminer l'enchère
+        bool allSold = true;
+        for (uint i = 0; i < auction.articles.length; i++) {
+            if (!auction.articles[i].sold) {
+                allSold = false;
+                break;
+            }
+        }
 
-        // Si c'était le dernier article, l'enchère est terminée
-        if (currentArticleIndex >= articles.length) {
-            auctionEnded = true;
-            emit AuctionEnded();
+        if (allSold) {
+            auction.auctionEnded = true;
+            emit AuctionEnded(auctionId);
+            console.log(unicode"L'enchère", auctionId, unicode"s'est terminée !");
         }
     }
+
+    // Obtenir le nombre total d'articles dans une enchère
+    function getArticleCount(uint auctionId) public view returns (uint) {
+        return auctions[auctionId].articles.length;
+    }
+
+    // Fonction pour récupérer un article spécifique d'une enchère
+    function getArticle(uint auctionId, uint articleIndex) public view returns (
+        string memory name,
+        uint startingPrice,
+        uint reservePrice,
+        uint priceDecrement,
+        uint timeInterval,
+        uint startTime,
+        bool sold,
+        address buyer
+    ) {
+        require(articleIndex < auctions[auctionId].articles.length, unicode"❌ Article non trouvé");
+
+        Article storage article = auctions[auctionId].articles[articleIndex];
+        return (
+            article.name,
+            article.startingPrice,
+            article.reservePrice,
+            article.priceDecrement,
+            article.timeInterval,
+            article.startTime,
+            article.sold,
+            article.buyer
+        );
+    }
+
 }

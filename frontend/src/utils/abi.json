@@ -1,15 +1,35 @@
 {
   "abi": [
     {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "ArticleAdded",
+      "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "articleIndex",
           "type": "uint256"
@@ -32,18 +52,43 @@
     },
     {
       "anonymous": false,
-      "inputs": [],
-      "name": "AuctionEnded",
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        }
+      ],
+      "name": "AuctionCreated",
       "type": "event"
     },
     {
       "anonymous": false,
-      "inputs": [],
-      "name": "AuctionReopened",
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionEnded",
       "type": "event"
     },
     {
       "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        },
         {
           "internalType": "string",
           "name": "name",
@@ -76,6 +121,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "auctionCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -83,7 +141,66 @@
           "type": "uint256"
         }
       ],
-      "name": "articles",
+      "name": "auctions",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "currentArticleIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "auctionEnded",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "articleIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "buy",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "createAuction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "articleIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "getArticle",
       "outputs": [
         {
           "internalType": "string",
@@ -130,28 +247,14 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "auctionEnded",
-      "outputs": [
+      "inputs": [
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
         }
       ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "buy",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "currentArticleIndex",
+      "name": "getArticleCount",
       "outputs": [
         {
           "internalType": "uint256",
@@ -163,26 +266,24 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "articleIndex",
+          "type": "uint256"
+        }
+      ],
       "name": "getCurrentPrice",
       "outputs": [
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "seller",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",

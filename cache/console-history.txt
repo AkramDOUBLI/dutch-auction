@@ -1,3 +1,0 @@
-console.log("Seller address:", seller);
-const seller = await contract.seller();
-const contract = await ethers.getContractAt("DutchAuction", "0x5FbDB2315678afecb367f032d93F642f64180aa3");
