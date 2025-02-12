@@ -10,6 +10,7 @@ contract DutchAuction {
         uint priceDecrement;
         uint timeInterval;
         uint startTime;
+        uint currentPrice;
         bool sold;
         address buyer;
     }
@@ -65,6 +66,7 @@ contract DutchAuction {
             priceDecrement: priceDecrement,
             timeInterval: timeInterval,
             startTime: block.timestamp,
+            currentPrice: startingPrice,
             sold: false,
             buyer: address(0)
         }));
@@ -73,17 +75,19 @@ contract DutchAuction {
         console.log(unicode"Article ajouté dans l'enchère", auctionId, unicode":", name);
     }
 
-   //  Obtenir le prix actuel d'un article spécifique
-    function getCurrentPrice(uint auctionId, uint articleIndex) public view returns (uint) {
+    function updateArticlePrice(uint auctionId, uint articleIndex) public {
         Auction storage auction = auctions[auctionId];
         require(articleIndex < auction.articles.length, unicode"Article invalide");
 
         Article storage article = auction.articles[articleIndex];
+
         uint timeElapsed = (block.timestamp - article.startTime) / article.timeInterval;
         uint priceReduction = timeElapsed * article.priceDecrement;
-        uint currentPrice = article.startingPrice > priceReduction ? article.startingPrice - priceReduction : article.reservePrice;
+        uint newPrice = article.startingPrice > priceReduction ? article.startingPrice - priceReduction : article.reservePrice;
 
-        return currentPrice > article.reservePrice ? currentPrice : article.reservePrice;
+        article.currentPrice = newPrice;
+
+        console.log(unicode"Mise à jour du prix : Article", articleIndex, unicode"| Nouveau prix :", newPrice);
     }
 
     // Acheter un article spécifique dans une enchère
@@ -94,7 +98,11 @@ contract DutchAuction {
         Article storage article = auction.articles[articleIndex];
 
         require(!article.sold, unicode"Cet article a déjà été vendu");
-        uint currentPrice = getCurrentPrice(auctionId, articleIndex);
+
+        // Mettre à jour le prix avant l'achat
+        updateArticlePrice(auctionId, articleIndex);
+
+        uint currentPrice = article.currentPrice;
         require(msg.value >= currentPrice, unicode"💰 Fonds insuffisants");
         require(block.timestamp >= article.startTime, unicode"⏳ L'enchère n'a pas encore commencé");
 
@@ -134,6 +142,7 @@ contract DutchAuction {
         uint priceDecrement,
         uint timeInterval,
         uint startTime,
+        uint currentPrice,
         bool sold,
         address buyer
     ) {
@@ -147,6 +156,7 @@ contract DutchAuction {
             article.priceDecrement,
             article.timeInterval,
             article.startTime,
+            article.currentPrice,
             article.sold,
             article.buyer
         );

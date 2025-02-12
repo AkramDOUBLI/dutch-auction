@@ -233,6 +233,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "currentPrice",
+          "type": "uint256"
+        },
+        {
           "internalType": "bool",
           "name": "sold",
           "type": "bool"
@@ -278,15 +283,9 @@
           "type": "uint256"
         }
       ],
-      "name": "getCurrentPrice",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
+      "name": "updateArticlePrice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ]
