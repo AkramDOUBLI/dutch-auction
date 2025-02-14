@@ -113,6 +113,35 @@ describe("DutchAuction", function () {
         expect(auctionEnded).to.equal(true);
     });
 
+    it("Vérifie que auctionEnded est bien true après le dernier article", async function () {
+        await auctionContract.connect(seller).createAuction();
+        await auctionContract.connect(seller).addArticle(1, "Article 1", 1000, 500, 50, 30);
+        await auctionContract.connect(seller).addArticle(1, "Article 2", 2000, 1000, 100, 30);
+        await auctionContract.connect(seller).startAuction(1);
+
+        let price = await auctionContract.getCurrentPrice(1, 0);
+        await auctionContract.connect(buyer1).buy(1, 0, { value: price });
+
+        price = await auctionContract.getCurrentPrice(1, 1);
+        await auctionContract.connect(buyer2).buy(1, 1, { value: price });
+
+        const auctionEnded = await auctionContract.isAuctionEnded(1);
+        expect(auctionEnded).to.equal(true);
+    });
+
+    it("Vérifie que currentArticleIndex est mis à jour après un achat", async function () {
+        await auctionContract.connect(seller).createAuction();
+        await auctionContract.connect(seller).addArticle(1, "Article 1", 1000, 500, 50, 30);
+        await auctionContract.connect(seller).addArticle(1, "Article 2", 2000, 1000, 100, 30);
+        await auctionContract.connect(seller).startAuction(1);
+
+        const price = await auctionContract.getCurrentPrice(1, 0);
+        await auctionContract.connect(buyer1).buy(1, 0, { value: price });
+
+        const auction = await auctionContract.auctions(1);
+        expect(auction.currentArticleIndex).to.equal(1);
+    });
+
     it("Empêche l'achat d'un article déjà vendu", async function () {
         await auctionContract.connect(seller).addArticle(1, "Article 1", 1000, 500, 50, 30);
         await auctionContract.connect(seller).startAuction(1);
@@ -135,4 +164,41 @@ describe("DutchAuction", function () {
         const article = await auctionContract.getArticle(1, 0);
         expect(article[9]).to.be.greaterThan(0); // purchaseTime doit être défini
     });
+
+    it("Transfère correctement le montant au vendeur après l'achat", async function () {
+        await auctionContract.connect(seller).addArticle(1, "Article 1", 1000, 500, 50, 30);
+        await auctionContract.connect(seller).startAuction(1);
+
+        const sellerInitialBalance = await ethers.provider.getBalance(seller.address);
+        console.log("Balance initiale du vendeur:", sellerInitialBalance.toString());
+
+        const priceToPay = await auctionContract.getCurrentPrice(1, 0);
+        await auctionContract.connect(buyer1).buy(1, 0, { value: priceToPay });
+
+        const sellerFinalBalance = await ethers.provider.getBalance(seller.address);
+        console.log("Balance finale du vendeur:", sellerFinalBalance.toString());
+
+        // Vérifier que le vendeur a bien reçu exactement `priceToPay`
+        expect(sellerFinalBalance).to.equal(sellerInitialBalance + priceToPay);
+    });
+
+    it("Empêche un non-vendeur de démarrer une enchère", async function () {
+        await auctionContract.connect(seller).createAuction();
+        await auctionContract.connect(seller).addArticle(1, "Article 1", 1000, 500, 50, 30);
+
+        await expect(
+            auctionContract.connect(buyer1).startAuction(1)
+        ).to.be.revertedWith("Seul le vendeur peut exécuter cette action");
+    });
+
+    it("Empêche un acheteur d'acheter un article avant le début de l'enchère", async function () {
+        await auctionContract.connect(seller).createAuction();
+        await auctionContract.connect(seller).addArticle(1, "Article 1", 1000, 500, 50, 30);
+
+        await expect(
+            auctionContract.connect(buyer1).buy(1, 0, { value: 1000 })
+        ).to.be.revertedWith("L'enchère n'a pas encore commencé");
+    });
+
+
 });
