@@ -1,0 +1,125 @@
+.my-auctions-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.table-wrapper {
+    width: 100%;
+    max-width: 95%;
+    overflow-x: auto;
+}
+
+.my-auctions-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.my-auctions-table th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.my-auctions-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.my-auctions-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.my-auctions-table tr:hover {
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.status {
+    display: inline-block;
+    width: 140px;
+    padding: 8px 0;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.status.ended {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.status.started {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.status.not-started {
+    background-color: #f39c12;
+    color: white;
+}
+
+.view-btn,
+.start-btn {
+    width: 100px;
+    border: none;
+    padding: 8px 0;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.view-btn {
+    background-color: #8e44ad;
+    color: white;
+}
+
+.view-btn:hover {
+    background-color: #732d91;
+}
+
+.start-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.start-btn:hover {
+    background-color: #27ae60;
+}
+
+
+@media (max-width: 768px) {
+    .my-auctions-table th,
+    .my-auctions-table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .view-btn,
+    .start-btn {
+        width: 80px;
+        font-size: 12px;
+        padding: 6px 0;
+    }
+
+    .status {
+        width: 110px;
+    }
+}

@@ -83,6 +83,19 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionStarted",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -152,6 +165,11 @@
           "internalType": "uint256",
           "name": "currentArticleIndex",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "auctionStarted",
+          "type": "bool"
         },
         {
           "internalType": "bool",
@@ -233,11 +251,6 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "currentPrice",
-          "type": "uint256"
-        },
-        {
           "internalType": "bool",
           "name": "sold",
           "type": "bool"
@@ -246,6 +259,11 @@
           "internalType": "address",
           "name": "buyer",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "finalPrice",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -283,7 +301,45 @@
           "type": "uint256"
         }
       ],
-      "name": "updateArticlePrice",
+      "name": "getCurrentPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "isAuctionEnded",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auctionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "startAuction",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

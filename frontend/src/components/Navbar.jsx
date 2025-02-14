@@ -6,6 +6,7 @@ function Navbar() {
             <h2 style={styles.title}>Enchères Hollandaises</h2>
             <div style={styles.links}>
                 <Link to="/" style={styles.link}>Accueil</Link>
+                <Link to="/my-auctions" style={styles.link}>Mes Enchères</Link>
             </div>
         </nav>
     );
@@ -17,7 +18,7 @@ const styles = {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "15px 30px",
-        backgroundColor: "#282c34",
+        backgroundColor: "rgba(23,106,28,0.85)",
         color: "white",
     },
     title: {

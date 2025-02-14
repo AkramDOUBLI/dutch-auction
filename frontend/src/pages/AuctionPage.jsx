@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getContract } from "../utils/contract";
+import "../styles/AuctionPage.css";
 
 function AuctionPage() {
     const { id } = useParams();
@@ -17,14 +18,24 @@ function AuctionPage() {
 
         try {
             const auctionData = await contract.auctions(id);
-            setAuction({ id, seller: auctionData.seller });
+            setAuction({
+                id,
+                seller: auctionData.seller,
+                currentArticleIndex: Number(auctionData.currentArticleIndex),
+                auctionStarted: auctionData.auctionStarted,
+            });
 
             setIsSeller(userAddress?.toLowerCase() === auctionData.seller.toLowerCase());
+
+            console.log("currentIndex: ", Number(auctionData.currentArticleIndex));
 
             const articleCount = await contract.getArticleCount(id);
             let articlesList = [];
             for (let i = 0; i < articleCount; i++) {
                 const article = await contract.getArticle(id, i);
+                const currentPrice = await contract.getCurrentPrice(id, i);
+
+                console.log(`Article ${i} | StartTime: ${article[5]} | Prix Actuel: ${currentPrice}`);
 
                 articlesList.push({
                     name: article[0],
@@ -32,9 +43,10 @@ function AuctionPage() {
                     reservePrice: article[2].toString(),
                     priceDecrement: article[3].toString(),
                     timeInterval: article[4].toString(),
-                    currentPrice: article[6].toString(),
-                    sold: article[7],
-                    buyer: article[8],
+                    currentPrice: currentPrice.toString(),
+                    sold: article[6],
+                    buyer: article[7],
+                    finalPrice: article[8].toString(),
                 });
             }
             setArticles(articlesList);
@@ -47,11 +59,13 @@ function AuctionPage() {
     // Actualiser le prix en temps réel
     useEffect(() => {
         const interval = setInterval(() => {
+            console.log("🔄 Mise à jour des prix...");
             loadArticles();
-        }, 10000);
+        }, 5000);
 
         return () => clearInterval(interval);
-    }, [id]);
+    }, [userAddress]);
+
 
     // Acheter un article
     const buyArticle = async (index) => {
@@ -106,42 +120,43 @@ function AuctionPage() {
     }, [userAddress]);
 
     return (
-        <div style={{ padding: "20px" }}>
+        <div className="auction-container">
             <h1>Enchère {id}</h1>
-            <p>Vendeur  : {auction?.seller}</p>
-            <p>acheteur : {userAddress}</p>
+            <p className="auction-details">Vendeur : {auction?.seller}</p>
+            <p className="auction-details">Acheteur : {userAddress}</p>
 
-            {/* Tableau des articles */}
             <h2>Liste des articles</h2>
             {articles.length > 0 ? (
-                <table border="1" cellPadding="10" style={{ width: "100%", textAlign: "center" }}>
+                <table className="auction-table">
                     <thead>
                     <tr>
                         <th>Nom</th>
                         <th>Prix de départ</th>
                         <th>Prix réservé</th>
                         <th>Prix actuel</th>
-                        <th>Intervalle (sec)</th>
+                        <th>Modification du prix</th>
+                        <th>Intervalle de modification du prix (sec)</th>
                         <th>Statut</th>
                         {!isSeller && <th>Action</th>}
                     </tr>
                     </thead>
                     <tbody>
                     {articles.map((article, index) => (
-                        <tr key={index}>
+                        <tr key={index} className={index === auction.currentArticleIndex ? "" : "article-inactive"}>
                             <td>{article.name}</td>
                             <td>{article.startingPrice} ETH</td>
                             <td>{article.reservePrice} ETH</td>
                             <td>{article.currentPrice} ETH</td>
+                            <td>{article.priceDecrement} ETH</td>
                             <td>{article.timeInterval} sec</td>
-                            <td>{article.sold ? `Vendu à ${article.buyer}` : "Disponible"}</td>
-                            {!isSeller && !article.sold && (
+                            <td>{article.sold ? `Vendu à ${article.buyer} pour ${article.finalPrice} ETH` : "Disponible"}</td>
+                            {!isSeller && !article.sold && index === auction.currentArticleIndex && (
                                 <td>
-                                    <button onClick={() => buyArticle(index)} disabled={loading}>
+                                    <button className="auction-btn buy-btn" onClick={() => buyArticle(index)} disabled={loading}>
                                         {loading ? "Achat..." : "Acheter"}
                                     </button>
-                                    <button onClick={() => updatePrice(index)} disabled={loading}>
-                                            {loading ? "Mise à jour..." : "Update"}
+                                    <button className="auction-btn update-btn" onClick={() => updatePrice(index)} disabled={loading}>
+                                        {loading ? "Mise à jour..." : "Update"}
                                     </button>
                                 </td>
                             )}
@@ -153,15 +168,13 @@ function AuctionPage() {
                 <p>Aucun article dans cette enchère.</p>
             )}
 
-            {/* Bouton pour ajouter un article (Seulement si c'est le vendeur) */}
-            {isSeller && (
-                <div style={{ marginTop: "20px" }}>
-                    <Link to={`/auction/${id}/add-article`}>
-                        <button>Ajouter un article</button>
-                    </Link>
-                </div>
+            {isSeller && !auction.auctionStarted && (
+                <Link to={`/auction/${id}/add-article`} className="add-article-btn">
+                    Ajouter un article
+                </Link>
             )}
         </div>
+
     );
 }
 
