@@ -13,6 +13,7 @@ contract DutchAuction {
         bool sold;
         address buyer;
         uint finalPrice;
+        uint purchaseTime;
     }
 
     struct Auction {
@@ -70,7 +71,8 @@ contract DutchAuction {
             startTime: 0,
             sold: false,
             buyer: address(0),
-            finalPrice: 0
+            finalPrice: 0,
+            purchaseTime: 0
         }));
 
         emit ArticleAdded(auctionId, name);
@@ -113,21 +115,6 @@ contract DutchAuction {
         return currentPrice;
     }
 
-//    function updateArticlePrice(uint auctionId, uint articleIndex) public {
-//        Auction storage auction = auctions[auctionId];
-//        require(articleIndex < auction.articles.length, unicode"Article invalide");
-//
-//        Article storage article = auction.articles[articleIndex];
-//
-//        uint timeElapsed = (block.timestamp - article.startTime) / article.timeInterval;
-//        uint priceReduction = timeElapsed * article.priceDecrement;
-//        uint newPrice = article.startingPrice > priceReduction ? article.startingPrice - priceReduction : article.reservePrice;
-//
-//        article.currentPrice = newPrice;
-//
-//        console.log(unicode"Mise à jour du prix : Article", articleIndex, unicode"| Nouveau prix :", newPrice);
-//    }
-
     //  Acheter l'article en cours
     function buy(uint auctionId, uint articleIndex) public payable {
         Auction storage auction = auctions[auctionId];
@@ -144,6 +131,7 @@ contract DutchAuction {
         article.sold = true;
         article.buyer = msg.sender;
         article.finalPrice = currentPrice;
+        article.purchaseTime = block.timestamp;
         payable(auction.seller).transfer(msg.value);
 
         emit ArticleSold(auctionId, articleIndex, msg.sender, currentPrice);
@@ -168,6 +156,40 @@ contract DutchAuction {
         return auctions[auctionId].auctionEnded;
     }
 
+   // Vérifier si l'enchère doit avancer ou se clôturer
+    function checkAuctionStatus(uint auctionId) public {
+        Auction storage auction = auctions[auctionId];
+
+        // Ne rien faire si l'enchère est déjà terminée
+        if (auction.auctionEnded) {
+            return;
+        }
+
+        require(auction.auctionStarted, unicode"L'enchère n'a pas encore commencé");
+        require(auction.currentArticleIndex < auction.articles.length, unicode"Aucun article actif");
+
+        Article storage article = auction.articles[auction.currentArticleIndex];
+
+        // Obtenir le prix actuel
+        uint currentPrice = getCurrentPrice(auctionId, auction.currentArticleIndex);
+
+        // ✅ Si le prix actuel atteint le prix réservé
+        if (currentPrice == article.reservePrice && !article.sold) {
+            console.log(unicode"⚠Prix réservé atteint pour l'article:", auction.currentArticleIndex);
+
+            // ✅ Passer à l'article suivant s'il en reste
+            if (auction.currentArticleIndex + 1 < auction.articles.length) {
+                auction.currentArticleIndex++;
+                auction.articles[auction.currentArticleIndex].startTime = block.timestamp;
+            } else {
+                // ✅ Clôturer l'enchère si c'était le dernier article
+                auction.auctionEnded = true;
+                emit AuctionEnded(auctionId);
+                console.log(unicode"L'enchère", auctionId, unicode"s'est terminée !");
+            }
+        }
+    }
+
 
 // Obtenir le nombre total d'articles dans une enchère
     function getArticleCount(uint auctionId) public view returns (uint) {
@@ -184,7 +206,8 @@ contract DutchAuction {
         uint startTime,
         bool sold,
         address buyer,
-        uint finalPrice
+        uint finalPrice,
+        uint purchaseTime
     ) {
         require(articleIndex < auctions[auctionId].articles.length, unicode"Article non trouvé");
 
@@ -198,7 +221,8 @@ contract DutchAuction {
             article.startTime,
             article.sold,
             article.buyer,
-            article.finalPrice
+            article.finalPrice,
+            article.purchaseTime
         );
     }
 

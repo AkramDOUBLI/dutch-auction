@@ -23,6 +23,7 @@ function AuctionPage() {
                 seller: auctionData.seller,
                 currentArticleIndex: Number(auctionData.currentArticleIndex),
                 auctionStarted: auctionData.auctionStarted,
+                auctionEnded: auctionData.auctionEnded,
             });
 
             setIsSeller(userAddress?.toLowerCase() === auctionData.seller.toLowerCase());
@@ -55,12 +56,42 @@ function AuctionPage() {
         }
     };
 
+    const checkAuctionStatus = async () => {
+        const contract = await getContract();
+        if (!contract) return;
+
+        try {
+            const auctionData = await contract.auctions(id);
+            // Si l'enchère est déjà clôturée, on arrête ici
+            if (auctionData.auctionEnded || !auctionData.auctionStarted) {
+                console.log("L'enchère est soit clôturée, soit pas encore commencée. Arrêt du check.");
+                return;
+            }
+
+            const currentArticleIndex = Number(auctionData.currentArticleIndex);
+            const article = await contract.getArticle(id, currentArticleIndex);
+            const currentPrice = await contract.getCurrentPrice(id, currentArticleIndex);
+
+            // Si le prix actuel a atteint le prix réservé et que l'article n'est pas vendu
+            if (Number(currentPrice) === Number(article[2]) && article[6] === false) {
+                console.log("Le prix réservé est atteint, mise à jour de l'enchère...");
+
+                // Passer à l'article suivant ou clôturer l'enchère
+                const tx = await contract.checkAuctionStatus(id);
+                await tx.wait();
+                alert("On passe à l'article suivant !")
+                loadArticles();
+            }
+        } catch (error) {
+            console.error("Erreur lors de la vérification de l'état de l'enchère :", error);
+        }
+    };
 
     // Actualiser le prix en temps réel
     useEffect(() => {
         const interval = setInterval(() => {
-            console.log("🔄 Mise à jour des prix...");
             loadArticles();
+            checkAuctionStatus();
         }, 5000);
 
         return () => clearInterval(interval);
@@ -83,23 +114,6 @@ function AuctionPage() {
             loadArticles();
         } catch (error) {
             console.error("Erreur lors de l'achat :", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    // Fonction pour mettre à jour le prix d'un article
-    const updatePrice = async (index) => {
-        const contract = await getContract();
-        if (!contract) return;
-
-        try {
-            setLoading(true);
-            const tx = await contract.updateArticlePrice(id, index);
-            await tx.wait();
-            alert("Prix mis à jour !");
-            loadArticles();
-        } catch (error) {
-            console.error("❌ Erreur lors de la mise à jour du prix :", error);
         } finally {
             setLoading(false);
         }
@@ -142,24 +156,27 @@ function AuctionPage() {
                     </thead>
                     <tbody>
                     {articles.map((article, index) => (
-                        <tr key={index} className={index === auction.currentArticleIndex ? "" : "article-inactive"}>
+                        <tr key={index} className={auction.auctionEnded || !auction.auctionStarted || index !== auction.currentArticleIndex ? "article-inactive" : ""}>
                             <td>{article.name}</td>
                             <td>{article.startingPrice} ETH</td>
                             <td>{article.reservePrice} ETH</td>
                             <td>{article.currentPrice} ETH</td>
                             <td>{article.priceDecrement} ETH</td>
                             <td>{article.timeInterval} sec</td>
-                            <td>{article.sold ? `Vendu à ${article.buyer} pour ${article.finalPrice} ETH` : "Disponible"}</td>
-                            {!isSeller && !article.sold && index === auction.currentArticleIndex && (
-                                <td>
-                                    <button className="auction-btn buy-btn" onClick={() => buyArticle(index)} disabled={loading}>
-                                        {loading ? "Achat..." : "Acheter"}
-                                    </button>
-                                    <button className="auction-btn update-btn" onClick={() => updatePrice(index)} disabled={loading}>
-                                        {loading ? "Mise à jour..." : "Update"}
-                                    </button>
-                                </td>
-                            )}
+                            <td>{article.sold ? `Vendu à ${article.buyer} pour ${article.finalPrice} ETH` : auction.auctionEnded ? "Non vendu" : "Disponible"}
+                            </td>
+                            {!isSeller &&
+                                !article.sold &&
+                                index === auction.currentArticleIndex &&
+                                auction.auctionStarted &&
+                                !auction.auctionEnded && (
+                                    <td>
+                                        <button className="auction-btn buy-btn" onClick={() => buyArticle(index)} disabled={loading}>
+                                            {loading ? "Achat..." : "Acheter"}
+                                        </button>
+                                    </td>
+                                )}
+
                         </tr>
                     ))}
                     </tbody>

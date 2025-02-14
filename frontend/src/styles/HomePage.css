@@ -27,6 +27,13 @@
     cursor: not-allowed;
 }
 
+.info-text {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
 .table-wrapper {
     width: 100%;
     max-width: 95%;
@@ -44,7 +51,7 @@
 }
 
 .auctions-table th {
-    background-color: #3498db;
+    background-color: #2470a3;
     color: white;
     padding: 12px;
     font-size: 16px;
@@ -63,6 +70,24 @@
 .auctions-table tr:hover {
     background-color: #f1f1f1;
     transition: background-color 0.3s ease-in-out;
+}
+
+.status-active {
+    font-weight: bold;
+    text-align: center;
+    color: green;
+}
+
+.status-closed {
+    font-weight: bold;
+    text-align: center;
+    color: red;
+}
+
+.status-not-started {
+    font-weight: bold;
+    text-align: center;
+    color: orange;
 }
 
 .access-btn {

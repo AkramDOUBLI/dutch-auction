@@ -11,7 +11,9 @@
     max-width: 95%;
     overflow-x: auto;
 }
-
+.table-wrapper h1 {
+    text-align: center;
+}
 .my-auctions-table {
     width: 100%;
     border-collapse: collapse;

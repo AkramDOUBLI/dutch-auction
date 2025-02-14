@@ -25,6 +25,7 @@ function HomePage() {
                         id: i,
                         seller: auction.seller,
                         started: auction.auctionStarted,
+                        ended: auction.auctionEnded,
                     });
                 }
             }
@@ -76,6 +77,7 @@ function HomePage() {
             </button>
 
             <h2>Enchères disponibles</h2>
+            <p className="info-text">Ces enchères ont été mises en ligne par d'autres vendeurs. Vous pouvez consulter et enchérir dès qu'elles sont ouvertes.</p>
             {auctions.length > 0 ? (
                 <div className="table-wrapper">
                     <table className="auctions-table">
@@ -83,6 +85,7 @@ function HomePage() {
                         <tr>
                             <th>Numéro d'enchère</th>
                             <th>Créateur</th>
+                            <th>Statut</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -91,6 +94,15 @@ function HomePage() {
                             <tr key={auction.id}>
                                 <td>{auction.id}</td>
                                 <td>{auction.seller}</td>
+                                <td>
+                                    {auction.ended ? (
+                                        <span className="status-closed">Clôturée</span>
+                                    ) : auction.started ? (
+                                        <span className="status-active">En cours</span>
+                                    ) : (
+                                        <span className="status-not-started">Pas encore commencée</span>
+                                    )}
+                                </td>
                                 <td>
                                     {auction.started ? (
                                         <button className="access-btn" onClick={() => navigate(`/auction/${auction.id}`)}>
