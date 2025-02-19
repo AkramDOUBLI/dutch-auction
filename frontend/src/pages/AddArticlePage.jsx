@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getContract } from "../utils/contract";
+import "../styles/AddArticlePage.css";
 
 function AddArticlePage() {
     const { id } = useParams();
@@ -43,61 +44,24 @@ function AddArticlePage() {
     };
 
     return (
-        <div style={styles.container}>
+        <div className="add-article-container">
             <h1>Ajouter un article</h1>
-            <input type="text" name="name" placeholder="Nom de l'article" value={newArticle.name} onChange={handleInputChange} style={styles.input} />
-            <input type="number" name="startingPrice" placeholder="Prix de départ (ETH)" value={newArticle.startingPrice} onChange={handleInputChange} style={styles.input} />
-            <input type="number" name="reservePrice" placeholder="Prix réservé (ETH)" value={newArticle.reservePrice} onChange={handleInputChange} style={styles.input} />
-            <input type="number" name="priceDecrement" placeholder="Décrément de prix (ETH)" value={newArticle.priceDecrement} onChange={handleInputChange} style={styles.input} />
-            <input type="number" name="timeInterval" placeholder="Intervalle de temps (secondes)" value={newArticle.timeInterval} onChange={handleInputChange} style={styles.input} />
+            <input type="text" name="name" placeholder="Nom de l'article" value={newArticle.name} onChange={handleInputChange} className="add-article-input" />
+            <input type="number" name="startingPrice" placeholder="Prix de départ (ETH)" value={newArticle.startingPrice} onChange={handleInputChange} className="add-article-input" />
+            <input type="number" name="reservePrice" placeholder="Prix réservé (ETH)" value={newArticle.reservePrice} onChange={handleInputChange} className="add-article-input" />
+            <input type="number" name="priceDecrement" placeholder="Décrément de prix (ETH)" value={newArticle.priceDecrement} onChange={handleInputChange} className="add-article-input" />
+            <input type="number" name="timeInterval" placeholder="Intervalle de temps (secondes)" value={newArticle.timeInterval} onChange={handleInputChange} className="add-article-input" />
 
-            <div style={styles.buttonContainer}>
-                <button onClick={addNewArticle} disabled={loading} style={styles.button}>
+            <div className="add-article-buttons">
+                <button onClick={addNewArticle} disabled={loading} className="add-article-btn add-btn">
                     {loading ? "Ajout en cours..." : "Ajouter l'article"}
                 </button>
-                <button onClick={() => navigate(`/auction/${id}`)} style={styles.cancelButton}>Annuler</button>
+                <button onClick={() => navigate(`/auction/${id}`)} className="add-article-btn cancel-btn">
+                    Annuler
+                </button>
             </div>
         </div>
     );
 }
-
-const styles = {
-    container: {
-        padding: "20px",
-        maxWidth: "400px",
-        margin: "auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-    },
-    input: {
-        padding: "10px",
-        fontSize: "16px",
-        border: "1px solid #ccc",
-        borderRadius: "5px",
-    },
-    buttonContainer: {
-        display: "flex",
-        justifyContent: "space-between",
-    },
-    button: {
-        padding: "10px",
-        fontSize: "16px",
-        backgroundColor: "#4CAF50",
-        color: "white",
-        border: "none",
-        borderRadius: "5px",
-        cursor: "pointer",
-    },
-    cancelButton: {
-        padding: "10px",
-        fontSize: "16px",
-        backgroundColor: "#d9534f",
-        color: "white",
-        border: "none",
-        borderRadius: "5px",
-        cursor: "pointer",
-    }
-};
 
 export default AddArticlePage;
