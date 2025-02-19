@@ -47,7 +47,6 @@ contract DutchAuction {
         auctions[auctionCount].auctionEnded = false;
 
         emit AuctionCreated(auctionCount, msg.sender);
-        console.log(unicode"Nouvelle enchère créée avec l'ID :", auctionCount);
     }
 
     // Ajouter un article à une enchère spécifique
@@ -76,7 +75,6 @@ contract DutchAuction {
         }));
 
         emit ArticleAdded(auctionId, name);
-        console.log(unicode"Article ajouté dans l'enchère", auctionId, unicode":", name);
     }
 
     // Démarrer l’enchère pour le premier article
@@ -90,7 +88,6 @@ contract DutchAuction {
         auction.articles[0].startTime = block.timestamp; // Commence avec le premier article
 
         emit AuctionStarted(auctionId);
-        console.log(unicode"Enchère", auctionId, unicode"démarrée !");
     }
 
     // Obtenir le prix actuel de l'article en cours**
@@ -135,7 +132,6 @@ contract DutchAuction {
         payable(auction.seller).transfer(msg.value);
 
         emit ArticleSold(auctionId, articleIndex, msg.sender, currentPrice);
-        console.log(unicode"Article vendu :", article.name);
 
         // Vérifier si l'article acheté est bien celui en cours
         if (articleIndex == auction.currentArticleIndex) {
@@ -146,7 +142,6 @@ contract DutchAuction {
             } else {
                 auction.auctionEnded = true;
                 emit AuctionEnded(auctionId);
-                console.log(unicode"L'enchère", auctionId, unicode"s'est terminée !");
             }
         }
     }
@@ -173,19 +168,17 @@ contract DutchAuction {
         // Obtenir le prix actuel
         uint currentPrice = getCurrentPrice(auctionId, auction.currentArticleIndex);
 
-        // ✅ Si le prix actuel atteint le prix réservé
+        // Si le prix actuel atteint le prix réservé
         if (currentPrice == article.reservePrice && !article.sold) {
-            console.log(unicode"⚠Prix réservé atteint pour l'article:", auction.currentArticleIndex);
 
-            // ✅ Passer à l'article suivant s'il en reste
+            // Passer à l'article suivant s'il en reste
             if (auction.currentArticleIndex + 1 < auction.articles.length) {
                 auction.currentArticleIndex++;
                 auction.articles[auction.currentArticleIndex].startTime = block.timestamp;
             } else {
-                // ✅ Clôturer l'enchère si c'était le dernier article
+                // Clôturer l'enchère si c'était le dernier article
                 auction.auctionEnded = true;
                 emit AuctionEnded(auctionId);
-                console.log(unicode"L'enchère", auctionId, unicode"s'est terminée !");
             }
         }
     }

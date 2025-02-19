@@ -92,7 +92,7 @@ function AuctionPage() {
         const interval = setInterval(() => {
             loadArticles();
             checkAuctionStatus();
-        }, 5000);
+        }, 1000);
 
         return () => clearInterval(interval);
     }, [userAddress]);
