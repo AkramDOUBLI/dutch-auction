@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/univ/projects/dutch-auction/contracts/DutchAuction.sol": {
-      "lastModificationDate": 1739371311466,
-      "contentHash": "369517d9b9480d8203e9e3c8a38e23bd",
+      "lastModificationDate": 1739534454881,
+      "contentHash": "9cb6aa58d329b1584cf311016687f7d4",
       "sourceName": "contracts/DutchAuction.sol",
       "solcConfig": {
         "version": "0.8.28",

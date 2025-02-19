@@ -1,37 +1,26 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import "../styles/Navbar.css";
 
 function Navbar() {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
-        <nav style={styles.navbar}>
-            <h2 style={styles.title}>Enchères Hollandaises</h2>
-            <div style={styles.links}>
-                <Link to="/" style={styles.link}>Accueil</Link>
+        <nav className="navbar">
+            <h2 className="navbar-title">Enchères Hollandaises</h2>
+
+            {/* Icône du menu burger */}
+            <div className="burger-menu" onClick={() => setIsOpen(!isOpen)}>
+                ☰
+            </div>
+
+            <div className={`navbar-links ${isOpen ? "open" : ""}`}>
+                <Link to="/" className="navbar-link" onClick={() => setIsOpen(false)}>Accueil</Link>
+                <Link to="/my-auctions" className="navbar-link" onClick={() => setIsOpen(false)}>Mes Enchères</Link>
+                <Link to="/history" className="navbar-link" onClick={() => setIsOpen(false)}>Historique</Link>
             </div>
         </nav>
     );
 }
-
-const styles = {
-    navbar: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "15px 30px",
-        backgroundColor: "#282c34",
-        color: "white",
-    },
-    title: {
-        margin: 0,
-    },
-    links: {
-        display: "flex",
-        gap: "15px",
-    },
-    link: {
-        color: "white",
-        textDecoration: "none",
-        fontSize: "18px",
-    },
-};
 
 export default Navbar;
