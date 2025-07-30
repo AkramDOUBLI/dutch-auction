@@ -4,8 +4,6 @@
 |--------|--------|
 | Doubli | Akram  |
 
-📌 **Note importante** : Le projet a été entièrement terminé **le vendredi 14 février 2025**, avec la dernière modification effectuée ce même jour. Cependant, en raison d'une **indisponibilité de GitLab** depuis **le jeudi 13 février jusqu’au mardi 19 février**, il n’a pas été possible de **pousser les commits** avant aujourd’hui. C’est pourquoi le push final a été réalisé seulement le **19 février 2025**.
-
 ## 📖 Table des Matières
 
 - [📝 Introduction](#-introduction)
