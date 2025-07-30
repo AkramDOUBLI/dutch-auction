@@ -258,11 +258,3 @@ Pour tester correctement l'application, il est recommandé d'utiliser **plusieur
 ## 🔚 Conclusion
 
 Ce projet d'**enchères hollandaises décentralisées** a permis d'explorer et d'implémenter un **Smart Contract Solidity** et une **application React** connectée à la blockchain.
-
-J'ai réussi à implémenter les fonctionnalités prévues, notamment la gestion des enchères, l'ajout et l'achat d'articles avec une **réduction automatique du prix** et une **clôture automatique** des enchères.
-
-Cependant, certaines **difficultés** ont été rencontrées :
-- **Gestion du temps dans le Smart Contract** : Calcul du prix actuel en fonction du temps écoulé.
-- **Mise à jour des états en temps réel** : Synchronisation du frontend avec les changements du Smart Contract.
-- **Tests et déploiement** : Configuration de Hardhat et vérification du bon fonctionnement des transactions.
-
